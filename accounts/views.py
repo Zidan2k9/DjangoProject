@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages, auth
 from django.contrib.auth.models import User
-
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 
 def register(request):
@@ -59,7 +59,11 @@ def login(request):
         return render(request, 'accounts/login.html')
 
 def logout(request):
-    return redirect('index')
+    if request.method == 'POST':
+        auth.logout(request)
+        messages.success(request,"Successfully logged out")
+        return redirect('index')
 
+@login_required(login_url='login') # Prevents non logged in visitors from accessing dashboard url
 def dashboard(request):
     return render(request, 'accounts/dashboard.html')
